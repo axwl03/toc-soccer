@@ -67,7 +67,6 @@ class TocMachine(GraphMachine):
     def on_exit_state2(self):
         print("Leaving state2")
 
-    # testing
     def is_going_to_state3(self, event):
         print("executed is going to state3")
         text = event.message.text
