@@ -1,12 +1,11 @@
 from transitions.extensions import GraphMachine
 
-from utils import send_text_message
+from utils import send_text_message, send_image_url
 
 # web scraping
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import os
-
 
 class TocMachine(GraphMachine):
     def __init__(self, **machine_configs):
@@ -28,7 +27,6 @@ class TocMachine(GraphMachine):
         else:
             return False
 
-
     #def is_going_to_CLprev(self, event):
     #    text = event.message.text
     #    return text.lower() == "go to CLprev"
@@ -41,7 +39,15 @@ class TocMachine(GraphMachine):
             send_text_message(reply_token, "Do not have next competition")
             return
         driver.get(self.url)
-        r = driver.execute_script("return document.documentElement.outerHTML")
+        #
+        more_buttons = driver.find_elements_by_class_name("moreLink")
+        for x in range(len(more_buttons)):
+            if more_buttons[x].is_displayed():
+                driver.execute_script("arguments[0].click();", more_buttons[x])
+                time.sleep(1)
+        r = driver.page_source
+        #
+        #r = driver.execute_script("return document.documentElement.outerHTML")
         driver.quit()
 
         # for debug
@@ -76,19 +82,7 @@ class TocMachine(GraphMachine):
         else:
             self.next = next.get("href")
 
-        # uefa.com
-        """soup = BeautifulSoup(r, "html.parser")
-        grouptimes = soup.select("li.tab.js-tabbify-tab.active")
-        grouptime = grouptimes[0]["data-group"]
-        time = grouptimes[0].find("span", {"class": "hidden-xs"}).text
-        items = soup.find_all("div", {"class": "mm-match js-tabbify-elem col-xs-12 col-sm-6 col-lg-3"})
-        str = time + ": \n"
-        for item in items:
-            hometeam = item.find("div", {"class": "team-home is-club"}).text.strip()
-            awayteam = item.find("div", {"class": "team-away is-club"}).text.strip()
-            str = str + "\n\t" + hometeam + " vs " + awayteam
-        """
-
+        print(s)
         reply_token = event.reply_token
         send_text_message(reply_token, s)
         #self.go_back()
@@ -97,7 +91,6 @@ class TocMachine(GraphMachine):
         text = event.message.text
         if text.lower() == "prev":
             self.url = self.prev
-            print("set url = prev")
             return True
         else:
             return False
@@ -106,30 +99,55 @@ class TocMachine(GraphMachine):
         text = event.message.text
         if text.lower() == "next":
             self.url = self.next
-            print("set url = next")
             return True
         else:
             return False
 
-    #def on_exit_CLstate(self):
-    #    print("Leaving CLstate")
+    def is_going_to_user(self, event):
+        text = event.message.text
+        return text.lower() == "user"
 
-    #def on_enter_CLprev(self, event):
-    #    print("I"m entering CLprev")
+    def on_enter_user(self, event):
+        reply_token = event.reply_token
+        s = "輸入\"歐冠\" 看最近歐冠賽程\nnext和prev可以看不同日期賽程或結果\n\n\"找教學\"\n推薦不同項目的足球影片\n\n\"fsm\" 展示state diagram"
+        send_text_message(reply_token, s)
 
-    #    reply_token = event.reply_token
-    #    send_text_message(reply_token, "Trigger CLprev")
-    #    self.go_back()
+    def on_enter_showfsm(self, event):
+        reply_token = event.reply_token
+        send_image_url(reply_token, "https://407034cf.ngrok.io/show-fsm")
 
-    #def on_exit_CLprev(self):
-    #    print("Leaving CLprev")
+    def is_going_to_showfsm(self, event):
+        text = event.message.text
+        return text.lower() == "fsm"
 
-    #def on_enter_state3(self, event):
-    #    print("I"m entering state3")
+    def on_enter_tutorial(self, event):
+        reply_token = event.reply_token
+        send_text_message(reply_token, "這邊有推薦的教學影片\n輸入想要學的項目\n帶球 or 射門 or 傳球")
 
-    #    reply_token = event.reply_token
-    #    send_text_message(reply_token, "You are asshole, too")
-    #    self.go_back()
+    def is_going_to_tutorial(self, event):
+        text = event.message.text
+        return text == "找教學"
 
-    #def on_exit_state3(self):
-    #    print("Leaving state3 and go to user state")
+    def on_enter_dribble(self, event):
+        reply_token = event.reply_token
+        send_text_message(reply_token, "https://www.youtube.com/watch?v=LRW3UpQrgPQ\nhttps://www.youtube.com/watch?v=D1FINJT_QIQ\nhttps://www.youtube.com/watch?v=0Zj3hhiYF0c")
+
+    def is_going_to_dribble(self, event):
+        text = event.message.text
+        return text == "帶球"
+
+    def on_enter_shooting(self, event):
+        reply_token = event.reply_token
+        send_text_message(reply_token, "https://www.youtube.com/watch?v=2wHXqTqVPFo\nhttps://www.youtube.com/watch?v=fb72F-NMkhM\nhttps://www.youtube.com/watch?v=XSOx4wMnNbA")
+
+    def is_going_to_shooting(self, event):
+        text = event.message.text
+        return text == "射門"
+
+    def on_enter_passing(self, event):
+        reply_token = event.reply_token
+        send_text_message(reply_token, "https://www.youtube.com/watch?v=QioehtsQMxs\nhttps://www.youtube.com/watch?v=P-WeVjGcRss\nhttps://www.youtube.com/watch?v=E3sjcv0m1z4")
+
+    def is_going_to_passing(self, event):
+        text = event.message.text
+        return text == "傳球"

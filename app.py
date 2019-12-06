@@ -8,17 +8,17 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 from fsm import TocMachine
-from utils import send_text_message
+from utils import send_text_message, send_image_url
 
 load_dotenv()
 
 
 machine = TocMachine(
-    states=["user", "CLstate"],
+    states=["user", "CLstate", "showfsm", "tutorial", "dribble", "shooting", "passing"],
     transitions=[
         {
             "trigger": "advance",
-            "source": "user",
+            "source": ["user", "showfsm", "tutorial"],
             "dest": "CLstate",
             "conditions": "is_going_to_CLstate",
         },
@@ -33,6 +33,42 @@ machine = TocMachine(
             "source": "CLstate",
             "dest": "CLstate",
             "conditions": "is_CLnext",
+        },
+        {
+            "trigger": "advance",
+            "source": ["CLstate", "showfsm", "tutorial", "dribble", "shooting", "passing"],
+            "dest": "user",
+            "conditions": "is_going_to_user",
+        },
+        {
+            "trigger": "advance",
+            "source": ["user", "CLstate", "tutorial"],
+            "dest": "showfsm",
+            "conditions": "is_going_to_showfsm",
+        },
+        {
+            "trigger": "advance",
+            "source": ["user", "showfsm", "CLstate", "dribble", "shooting", "passing"],
+            "dest": "tutorial",
+            "conditions": "is_going_to_tutorial",
+        },
+        {
+            "trigger": "advance",
+            "source": ["tutorial", "shooting", "passing"],
+            "dest": "dribble",
+            "conditions": "is_going_to_dribble",
+        },
+        {
+            "trigger": "advance",
+            "source": ["tutorial", "dribble", "passing"],
+            "dest": "shooting",
+            "conditions": "is_going_to_shooting",
+        },
+        {
+            "trigger": "advance",
+            "source": ["tutorial", "shooting", "dribble"],
+            "dest": "passing",
+            "conditions": "is_going_to_passing",
         },
         #{"trigger": "go_back", "source": ["CLprev", "state3"], "dest": "user"},
     ],
