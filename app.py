@@ -14,7 +14,7 @@ load_dotenv()
 
 
 machine = TocMachine(
-    states=["user", "CLstate", "showfsm", "tutorial", "dribble", "shooting", "passing"],
+    states=["user", "CLstate", "showfsm", "tutorial", "dribble", "shooting", "passing", "dribble2", "passing2", "shooting2"],
     transitions=[
         {
             "trigger": "advance",
@@ -36,7 +36,7 @@ machine = TocMachine(
         },
         {
             "trigger": "advance",
-            "source": ["CLstate", "showfsm", "tutorial", "dribble", "shooting", "passing"],
+            "source": ["CLstate", "showfsm", "tutorial", "dribble", "shooting", "passing", "dribble2", "passing2", "shooting2"],
             "dest": "user",
             "conditions": "is_going_to_user",
         },
@@ -48,7 +48,7 @@ machine = TocMachine(
         },
         {
             "trigger": "advance",
-            "source": ["user", "showfsm", "CLstate", "dribble", "shooting", "passing"],
+            "source": ["user", "showfsm", "CLstate", "dribble", "shooting", "passing", "dribble2", "passing2", "shooting2"],
             "dest": "tutorial",
             "conditions": "is_going_to_tutorial",
         },
@@ -69,6 +69,24 @@ machine = TocMachine(
             "source": ["tutorial", "shooting", "dribble"],
             "dest": "passing",
             "conditions": "is_going_to_passing",
+        },
+        {
+            "trigger": "advance",
+            "source": "dribble",
+            "dest": "dribble2",
+            "conditions": "is_going_to_dribble2",
+        },
+        {
+            "trigger": "advance",
+            "source": "shooting",
+            "dest": "shooting2",
+            "conditions": "is_going_to_shooting2",
+        },
+        {
+            "trigger": "advance",
+            "source": "passing",
+            "dest": "passing2",
+            "conditions": "is_going_to_passing2",
         },
         #{"trigger": "go_back", "source": ["CLprev", "state3"], "dest": "user"},
     ],

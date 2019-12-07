@@ -27,10 +27,6 @@ class TocMachine(GraphMachine):
         else:
             return False
 
-    #def is_going_to_CLprev(self, event):
-    #    text = event.message.text
-    #    return text.lower() == "go to CLprev"
-
     def on_enter_CLstate(self, event):
         print("I'm entering CLstate")
         driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=self.chrome_options)
@@ -39,15 +35,7 @@ class TocMachine(GraphMachine):
             send_text_message(reply_token, "Do not have next competition")
             return
         driver.get(self.url)
-        #
-        more_buttons = driver.find_elements_by_class_name("moreLink")
-        for x in range(len(more_buttons)):
-            if more_buttons[x].is_displayed():
-                driver.execute_script("arguments[0].click();", more_buttons[x])
-                time.sleep(1)
-        r = driver.page_source
-        #
-        #r = driver.execute_script("return document.documentElement.outerHTML")
+        r = driver.execute_script("return document.documentElement.outerHTML")
         driver.quit()
 
         # for debug
@@ -55,7 +43,6 @@ class TocMachine(GraphMachine):
         f.write(str(r))
         f.close()
 
-        # goal.com
         soup = BeautifulSoup(r, "html.parser")
         time = soup.find("div", {"class": "nav-switch__label"}).text
         s = time + "\n"
@@ -85,7 +72,6 @@ class TocMachine(GraphMachine):
         print(s)
         reply_token = event.reply_token
         send_text_message(reply_token, s)
-        #self.go_back()
 
     def is_CLprev(self, event):
         text = event.message.text
@@ -114,7 +100,7 @@ class TocMachine(GraphMachine):
 
     def on_enter_showfsm(self, event):
         reply_token = event.reply_token
-        send_image_url(reply_token, "https://407034cf.ngrok.io/show-fsm")
+        send_image_url(reply_token, "https://raw.githubusercontent.com/axwl03/toc-soccer/master/fsm.png")
 
     def is_going_to_showfsm(self, event):
         text = event.message.text
@@ -130,7 +116,7 @@ class TocMachine(GraphMachine):
 
     def on_enter_dribble(self, event):
         reply_token = event.reply_token
-        send_text_message(reply_token, "https://www.youtube.com/watch?v=LRW3UpQrgPQ\nhttps://www.youtube.com/watch?v=D1FINJT_QIQ\nhttps://www.youtube.com/watch?v=0Zj3hhiYF0c")
+        send_text_message(reply_token, "帶球影片:\nhttps://www.youtube.com/watch?v=LRW3UpQrgPQ\nhttps://www.youtube.com/watch?v=D1FINJT_QIQ\nhttps://www.youtube.com/watch?v=0Zj3hhiYF0c")
 
     def is_going_to_dribble(self, event):
         text = event.message.text
@@ -138,7 +124,7 @@ class TocMachine(GraphMachine):
 
     def on_enter_shooting(self, event):
         reply_token = event.reply_token
-        send_text_message(reply_token, "https://www.youtube.com/watch?v=2wHXqTqVPFo\nhttps://www.youtube.com/watch?v=fb72F-NMkhM\nhttps://www.youtube.com/watch?v=XSOx4wMnNbA")
+        send_text_message(reply_token, "射門影片:\nhttps://www.youtube.com/watch?v=2wHXqTqVPFo\nhttps://www.youtube.com/watch?v=fb72F-NMkhM\nhttps://www.youtube.com/watch?v=XSOx4wMnNbA")
 
     def is_going_to_shooting(self, event):
         text = event.message.text
@@ -146,8 +132,32 @@ class TocMachine(GraphMachine):
 
     def on_enter_passing(self, event):
         reply_token = event.reply_token
-        send_text_message(reply_token, "https://www.youtube.com/watch?v=QioehtsQMxs\nhttps://www.youtube.com/watch?v=P-WeVjGcRss\nhttps://www.youtube.com/watch?v=E3sjcv0m1z4")
+        send_text_message(reply_token, "傳球影片:\nhttps://www.youtube.com/watch?v=QioehtsQMxs\nhttps://www.youtube.com/watch?v=P-WeVjGcRss\nhttps://www.youtube.com/watch?v=E3sjcv0m1z4")
 
     def is_going_to_passing(self, event):
         text = event.message.text
         return text == "傳球"
+
+    def on_enter_dribble2(self, event):
+        reply_token = event.reply_token
+        send_text_message(reply_token, "50個腳感練習:\nhttps://www.youtube.com/watch?v=ObncYq18lMw\n\n過人方法:\nhttps://www.youtube.com/watch?v=Q0-qHJzn2gk\n\n必學練習:\nhttps://www.youtube.com/watch?v=jwIHc9rz7yo")
+
+    def is_going_to_dribble2(self, event):
+        text = event.message.text
+        return text == "看更多"
+
+    def on_enter_passing2(self, event):
+        reply_token = event.reply_token
+        send_text_message(reply_token, "15個傳球練習:\nhttps://www.youtube.com/watch?v=ttbBSoovPc4\n\n地面快速傳球:\nhttps://www.youtube.com/watch?v=vNsqMKT98Ms\n\n所有傳球技巧:\nhttps://www.youtube.com/watch?v=5TgAUdK_kIs")
+
+    def is_going_to_passing2(self, event):
+        text = event.message.text
+        return text == "看更多"
+
+    def on_enter_shooting2(self, event):
+        reply_token = event.reply_token
+        send_text_message(reply_token, "香蕉球:\nhttps://www.youtube.com/watch?v=wkcmthkXXfc\n\n下墜球:\nhttps://www.youtube.com/watch?v=0oJ8oIudXYs\n\n落葉球:\nhttps://www.youtube.com/watch?v=HRJg8--y-Q0")
+
+    def is_going_to_shooting2(self, event):
+        text = event.message.text
+        return text == "看更多"
