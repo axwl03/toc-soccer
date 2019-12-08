@@ -100,7 +100,7 @@ The initial state is set to `user`.
   * Input: "看更多"
     * Reply: other video suggestions
 
-  * user, tutorial, CLstate and fsm state are interconnected
+* user, tutorial, CLstate and fsm state are interconnected
    
 ## Deploy
 Setting to deploy webhooks on Heroku.
