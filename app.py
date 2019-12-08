@@ -112,13 +112,12 @@ line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
 
 
-@app.route("/", methods=["POST"])
+@app.route("/callback", methods=["POST"])
 def callback():
     signature = request.headers["X-Line-Signature"]
     # get request body as text
     body = request.get_data(as_text=True)
-    # app.logger.info("Request body: " + body)
-    # print("Request body: " + body, "Signature: " + signature)
+    app.logger.info("Request body: " + body)
 
     # parse webhook body
     try:
@@ -126,19 +125,6 @@ def callback():
     except InvalidSignatureError:
         abort(400)
 
-    for event in events:
-        if not isinstance(event, MessageEvent):
-            continue
-        if not isinstance(event.message, TextMessage):
-            continue
-        if not isinstance(event.message.text, str):
-            continue
-        print(f"\nFSM STATE: {machine.state}")
-        # print(f"REQUEST BODY: \n{body}")
-        response = machine.advance(event)
-        if response == False:
-            send_text_message(event.reply_token, "Not Entering any State")
-    """
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
         if not isinstance(event, MessageEvent):
@@ -149,7 +135,7 @@ def callback():
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=event.message.text)
         )
-    """
+
     return "OK"
 
 

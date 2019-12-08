@@ -5,8 +5,6 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/NCKU-CCS/TOC-Project-2020/badge.svg)](https://snyk.io/test/github/NCKU-CCS/TOC-Project-2020)
 
 
-Template Code for TOC Project 2020
-
 A Line bot based on a finite state machine
 
 More details in the [Slides](https://hackmd.io/@TTW/ToC-2019-Project#) and [FAQ](https://hackmd.io/s/B1Xw7E8kN)
@@ -16,8 +14,9 @@ More details in the [Slides](https://hackmd.io/@TTW/ToC-2019-Project#) and [FAQ]
 ### Prerequisite
 * Python 3.6
 * Pipenv
-* Facebook Page and App
+* Line App
 * HTTPS Server
+* Chrome and ChromeDriver
 
 #### Install Dependency
 ```sh
@@ -37,7 +36,7 @@ pipenv shell
 
 #### Secret Data
 You should generate a `.env` file to set Environment Variables refer to our `.env.sample`.
-`LINE_CHANNEL_SECRET` and `LINE_CHANNEL_ACCESS_TOKEN` **MUST** be set to proper values.
+`LINE_CHANNEL_SECRET`, `LINE_CHANNEL_ACCESS_TOKEN`, `CHROMEDRIVER_PATH` and `GOOGLE_CHROME_BIN` **MUST** be set to proper values.
 Otherwise, you might not be able to run your code.
 
 #### Run Locally
@@ -71,20 +70,38 @@ Or You can use [servo](http://serveo.net/) to expose local servers to the intern
 
 
 ## Finite State Machine
-![fsm](./img/show-fsm.png)
+![fsm](./fsm.png)
 
 ## Usage
 The initial state is set to `user`.
 
-Every time `user` state is triggered to `advance` to another state, it will `go_back` to `user` state after the bot replies corresponding message.
-
 * user
-	* Input: "go to state1"
-		* Reply: "I'm entering state1"
+	* Input: "fsm"
+		* Reply: fsm diagram
 
-	* Input: "go to state2"
-		* Reply: "I'm entering state2"
+	* Input: "歐冠"
+		* Reply: scrape Champions League competition events
 
+  * Input: "找教學"
+  	* Reply: chat with bot to get tutorials
+
+* CLstate
+  * Input: "prev"
+    * Reply: scrape previous Champions League competition events
+
+  * Input: "next"
+    * Reply: scrape next Champions League competition events
+
+* tutorial
+  * Input: "帶球", "射門", "傳球"
+    * Reply: video suggestions to specific categories
+
+* dribble, shooting, passing
+  * Input: "看更多"
+    * Reply: other video suggestions
+
+  * user, tutorial, CLstate and fsm state are interconnected
+   
 ## Deploy
 Setting to deploy webhooks on Heroku.
 
@@ -152,7 +169,7 @@ sudo snap install --classic heroku
 ## Reference
 [Pipenv](https://medium.com/@chihsuan/pipenv-更簡單-更快速的-python-套件管理工具-135a47e504f4) ❤️ [@chihsuan](https://github.com/chihsuan)
 
-[TOC-Project-2019](https://github.com/winonecheng/TOC-Project-2019) ❤️ [@winonecheng](https://github.com/winonecheng)
+[TOC-Project-2020](https://github.com/NCKU-CCS/TOC-Project-2020) ❤️ [@winonecheng](https://github.com/winonecheng)
 
 Flask Architecture ❤️ [@Sirius207](https://github.com/Sirius207)
 
